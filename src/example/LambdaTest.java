@@ -28,21 +28,30 @@ public class LambdaTest {
 		frame.setVisible(true);
 	}
 	
-	@Test
+	
 	public void test1(){
 		String[] fruits = {"apple","banana","watermelon","peach"};  
 			List<String> fruitList =  Arrays.asList(fruits);  
-			  
 			// 以前的循环方式  
 			for (String fruit : fruitList) {  
 			     System.out.println(fruit + "; ");  
 			}  
-			  
 			// 使用 lambda 表达式以及函数操作
 			fruitList.forEach((fruit) -> System.out.println(fruit + "; "));  
-			   
 			// 在 Java 8 中使用双冒号操作符 
 			fruitList.forEach(System.out::println);
+	}
+	@Test
+	public void test2(){
+		new Thread(new Runnable() {  
+		    @Override  
+		    public void run() {  
+		        System.out.println("Hello world !");  
+		    }  
+		}).start();  
+		  
+		// 使用 lambda expression  
+		new Thread(() -> System.out.println("Hello world !")).start();  
 	}
 	
 	
