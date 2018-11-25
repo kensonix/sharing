@@ -1,7 +1,11 @@
 package fruits;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -24,7 +28,7 @@ public class FruitTest {
 			fruitList.add(banana);
 		}
 	
-		@Test
+//		@Test
 	public void testFilter(){
 		List<Fruit> greenList = fruitList.stream()
 				.flatMap(subFruit -> subFruit.subFruits.stream())
@@ -35,7 +39,63 @@ public class FruitTest {
 		for(Fruit fruit : greenList){
 			System.out.println(fruit);
 		}
-				
-						
 	}
+		
+//		@Test
+		public void testMap(){
+			List<Fruit> appleList = fruitList.get(0).subFruits;
+			Set<String> appleSet = appleList.stream()
+					.map(apple ->  {String name = apple.name;return name;})
+					.collect(Collectors.toSet());
+			
+			appleSet.forEach(System.out::println);
+		}
+		
+//		@Test
+		public  void testMax(){
+			List<Fruit> appleList = fruitList.get(0).subFruits;
+			Fruit fruit = appleList.stream()
+					.max(Comparator.comparing(apple ->  ((Fruit)apple).getPrice()))
+					.get();
+			
+			System.out.println( fruit.toString() +"'s price is " + fruit.getPrice());
+			
+			double avgPrice = appleList.stream().collect(Collectors.averagingInt(apple -> ((Fruit)apple).getPrice() ));
+			System.out.println(avgPrice);
+		}
+		
+//		@Test
+		public void testCollectors(){
+			List<Fruit> appleList = fruitList.get(0).subFruits;
+			
+			Optional<Fruit> fruit1 =  (Optional<Fruit>) appleList.stream()
+					.collect(Collectors.maxBy( Comparator.comparing(apple ->( (Fruit)apple).getPrice() )));
+			System.out.println(fruit1.map(Fruit::getName));
+			
+			double avgPrice = appleList.stream().collect(Collectors.averagingInt(apple -> ((Fruit)apple).getPrice() ));
+			System.out.println(avgPrice);
+		}
+		
+//		@Test
+		public void testPartion(){
+			//这里的Boolean 是装箱类型，因为stream流处理后得到的是装箱类型的key
+			Map<Boolean,List<Fruit>> fruitMap = fruitList.stream()
+					.flatMap(fruit -> fruit.subFruits.stream())
+					.collect(Collectors.partitioningBy(Fruit::isGreen));
+			List<Fruit> greenFruit = fruitMap.get(true);
+			greenFruit.forEach(fruit -> System.out.print( fruit.getName() +"、"));
+			System.out.println("/r/n-----------------");
+			List<Fruit> notGreenFruit = fruitMap.get(false);
+			notGreenFruit.forEach(fruit -> System.out.print(" " + fruit.getName()));
+		}
+		
+		@Test
+		public void testGroup(){
+			Map<Integer,List<Fruit>> fruitMap = fruitList.stream()
+					.flatMap(fruit -> fruit.subFruits.stream())
+					.collect(Collectors.groupingBy(Fruit::getPrice));
+			List<Fruit> fruitList = fruitMap.get(10);
+			fruitList.forEach( f -> System.out.println(f));
+		}
+		
 }
